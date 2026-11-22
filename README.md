@@ -92,3 +92,7 @@ Everything in this repository was written from scratch between Nov 11 and Nov 30
 ## Tests
 
 `npm test` covers alt-text quality detection, decorative-image handling, privacy classification, the guarantee that private pages never route to the cloud, escalation rules and model-reply parsing.
+
+## Team
+
+Built by Syed Mohammad Huzaifa ([@huzaifaguru](https://github.com/huzaifaguru)), Muhammad Maaz ur Rehman ([@maazrehman99](https://github.com/maazrehman99)) and Shaikh Muhammad Zain ([@ZainDev04](https://github.com/ZainDev04)).
