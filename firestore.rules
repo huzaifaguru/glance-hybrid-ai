@@ -1,0 +1,38 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Shared alt-text cache for images on PUBLIC pages. Doc id = SHA-256(image URL | language),
+    // so the database never stores the URL itself. Private-page images are never written.
+    function validEntry(id) {
+      return request.auth != null
+        && id.matches('^[0-9a-f]{64}$')
+        && request.resource.data.keys().hasOnly(['alt', 'detail', 'kind', 'source', 'lang', 'uid', 'createdAt'])
+        && request.resource.data.alt is string && request.resource.data.alt.size() > 0 && request.resource.data.alt.size() <= 300
+        && (request.resource.data.detail == null || (request.resource.data.detail is string && request.resource.data.detail.size() <= 2000))
+        && request.resource.data.kind is string && request.resource.data.kind.size() <= 20
+        && request.resource.data.source in ['device', 'cloud']
+        && request.resource.data.lang in ['en', 'es', 'ja']
+        && request.resource.data.uid == request.auth.uid
+        && request.resource.data.createdAt == request.time;
+    }
+
+    match /altCache/{id} {
+      allow read: if request.auth != null;
+      allow create: if validEntry(id);
+      // Only the original writer may refine an entry, so nobody can overwrite another user's description.
+      allow update: if validEntry(id) && resource.data.uid == request.auth.uid;
+      allow delete: if false;
+    }
+
+    // "Report wrong description" feedback, write-only.
+    match /feedback/{id} {
+      allow create: if request.auth != null
+        && request.resource.data.keys().hasOnly(['cacheId', 'reason', 'uid', 'createdAt'])
+        && request.resource.data.uid == request.auth.uid
+        && request.resource.data.reason is string && request.resource.data.reason.size() <= 40
+        && request.resource.data.createdAt == request.time;
+      allow read, update, delete: if false;
+    }
+  }
+}

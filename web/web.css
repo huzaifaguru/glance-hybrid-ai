@@ -1,0 +1,18 @@
+.wrap { max-width: 860px; margin: 0 auto; padding-left: 16px; padding-right: 16px; }
+.hero { background: var(--surface); border-bottom: 1px solid var(--line); padding: 28px 0 20px; }
+.hero h1 { font-size: 30px; }
+.lede { font-size: 17px; max-width: 70ch; }
+main.wrap { padding-top: 20px; padding-bottom: 32px; }
+.drop { border: 2px dashed var(--line); border-radius: 12px; padding: 20px; text-align: center; cursor: pointer; }
+.drop p { margin: 4px 0; }
+.drop.over { border-color: var(--accent); background: var(--public-bg); }
+.mode { border: 1px solid var(--line); border-radius: 10px; margin: 12px 0; padding: 8px 12px; display: grid; gap: 6px; }
+.mode legend { font-weight: 600; padding: 0 4px; }
+.log { margin-top: 12px; }
+.sample { margin-top: 14px; }
+.sample h3 { margin: 0 0 8px; }
+.sample figure { margin: 10px 0; position: relative; }
+.sample img { max-width: 100%; height: auto; border-radius: 8px; border: 1px solid var(--line); display: block; }
+.sample .cap { font-size: 13px; background: #fff8d6; color: #14161a; border: 1px solid #c9a400; border-radius: 8px; padding: 6px 8px; margin-top: 6px; }
+.how { padding-left: 20px; margin: 0; display: grid; gap: 6px; }
+.foot { color: var(--muted); font-size: 13px; padding-bottom: 32px; }

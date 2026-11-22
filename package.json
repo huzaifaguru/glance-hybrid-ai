@@ -1,0 +1,24 @@
+{
+  "name": "glance-hybrid-alt-text",
+  "version": "1.0.0",
+  "description": "Glance: hybrid on-device + cloud image descriptions for screen reader users, built on Firebase AI Logic.",
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "test": "node --test \"tests/**/*.test.js\"",
+    "zip": "node scripts/build.mjs && cd dist/extension && powershell -NoProfile -Command \"Compress-Archive -Force -Path * -DestinationPath ../glance-extension.zip\"",
+    "deploy": "npm run build && firebase deploy --only hosting,firestore:rules",
+    "build:dev": "node scripts/build.mjs --dev-web"
+  },
+  "license": "Apache-2.0",
+  "type": "module",
+  "dependencies": {
+    "firebase": "^13.4.0"
+  },
+  "devDependencies": {
+    "esbuild": "^0.28.2"
+  },
+  "private": true
+}
