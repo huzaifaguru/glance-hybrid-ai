@@ -35,6 +35,14 @@ $('s-notice').src = billingNotice();
 $('s-scene').src = parkScene();
 
 const lang = () => $('lang').value;
+
+function friendlyError(e) {
+  const m = String(e?.message || e);
+  if (/App Check|appCheck|401/.test(m)) return 'this site could not be verified by App Check (the site owner needs to allow this domain). Please try again later.';
+  if (/429|quota|RESOURCE_EXHAUSTED/i.test(m)) return 'the free AI quota is used up for now. Please try again later.';
+  if (/Failed to fetch|NetworkError/i.test(m)) return 'no internet connection, and on-device AI is not available on this computer.';
+  return m.slice(0, 160);
+}
 const chosenPrivacy = () => (document.querySelector('input[name="privacy"]:checked').value === 'private'
   ? { private: true, reason: 'You said this image is private' }
   : classifyPrivacy({ hostname: location.hostname, patterns: remote?.sensitivePatterns || [] }));
@@ -62,7 +70,7 @@ async function handleFile(file) {
     // Uploaded files have no public URL, so they are never written to the shared cache.
     await describeBlob(file, { privacy: chosenPrivacy(), title: 'Uploaded image', context: file.name, cacheKey: null, wantDetail: $('want-detail').checked });
   } catch (e) {
-    const err = document.createElement('li'); err.className = 'entry'; err.textContent = `Could not describe: ${e.message}`;
+    const err = document.createElement('li'); err.className = 'entry'; err.textContent = `Could not describe: ${friendlyError(e)}`;
     $('log').prepend(err);
   } finally { busy.remove(); }
 }
@@ -92,7 +100,12 @@ $('fix-article').addEventListener('click', async () => {
       const cap = document.createElement('p'); cap.className = 'cap'; cap.setAttribute('aria-hidden', 'true');
       cap.textContent = `alt = "${res.alt}"${res.detail ? ` · detail: ${res.detail}` : ''}`;
       fig.appendChild(cap);
-    } catch (e) { console.error(e); }
+    } catch (e) {
+      console.error(e);
+      const err = document.createElement('li'); err.className = 'entry';
+      err.textContent = `Could not describe "${img.id}": ${friendlyError(e)}`;
+      $('log').prepend(err);
+    }
   }
   btn.disabled = false; btn.textContent = 'Describe every image on this page';
 });
