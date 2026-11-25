@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Glance: hybrid AI alt text</title>
+  <meta name="description" content="Glance describes unlabeled images for blind and low-vision people. On-device Gemini Nano first, cloud Gemini only for public pages, built on Firebase AI Logic.">
+  <link rel="stylesheet" href="ui.css">
+  <link rel="stylesheet" href="web.css">
+</head>
+<body>
+  <header class="hero">
+    <div class="wrap">
+      <h1><span class="logo" aria-hidden="true">◉</span> Glance</h1>
+      <p class="lede">More than half of the web's most popular home pages have images with no text description (WebAIM Million). On those images, screen reader users hear <q>image</q> or a file name. Glance writes the missing descriptions with Gemini Nano on your device. It uses cloud Gemini only when a page is public and the image is too complex for Nano.</p>
+      <p id="device-status" class="status" role="status">Checking Gemini Nano…</p>
+      <button id="download" class="btn" hidden>Download Gemini Nano</button>
+      <progress id="dl-progress" max="1" value="0" hidden></progress>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <section class="card" aria-labelledby="try-h">
+      <h2 id="try-h">Try it with your own image</h2>
+      <div id="drop" class="drop" tabindex="0" role="button" aria-describedby="drop-hint">
+        <p><strong>Drop, paste or choose an image</strong></p>
+        <p id="drop-hint" class="hint">JPEG, PNG, WebP or GIF. Your image is only sent to the cloud if you pick "Public".</p>
+        <input type="file" id="file" accept="image/*" hidden>
+      </div>
+      <fieldset class="mode">
+        <legend>Where did this image come from?</legend>
+        <label><input type="radio" name="privacy" value="private" checked> Private (my email, bank, health, photos): on-device only</label>
+        <label><input type="radio" name="privacy" value="public"> Public website: cloud allowed for complex images</label>
+      </fieldset>
+      <label class="row"><input type="checkbox" id="want-detail"> Always give a detailed description</label>
+      <label class="row">Language
+        <select id="lang"><option value="en">English</option><option value="es">Español</option><option value="ja">日本語</option></select>
+      </label>
+      <ol id="log" class="log" aria-live="polite"></ol>
+    </section>
+
+    <section class="card" aria-labelledby="article-h">
+      <h2 id="article-h">Sample page: images without alt text</h2>
+      <p class="hint">This page is built the way much of the web is, with images that have no alt text. Run Glance on it here, or install the Glance extension and it happens automatically on every site.</p>
+      <button id="fix-article" class="btn">Describe every image on this page</button>
+      <article class="sample" id="sample">
+        <h3>City water report: rainfall up 40% this spring</h3>
+        <figure><img id="s-chart" width="560" height="320"></figure>
+        <p>The utility published its quarterly figures on Monday. Residents are asked to read the notice below before the billing change.</p>
+        <figure><img id="s-notice" width="560" height="300"></figure>
+        <p>Volunteers met at the riverside park to plant trees along the new trail.</p>
+        <figure><img id="s-scene" width="560" height="320"></figure>
+      </article>
+    </section>
+
+    <section class="card" aria-labelledby="how-h">
+      <h2 id="how-h">How Glance routes each image</h2>
+      <ol class="how">
+        <li><strong>Privacy first.</strong> Mail, banking, health and personal-photo sites, pages with a password field, and sites you mark private use <em>ONLY_ON_DEVICE</em>. The image never leaves your computer.</li>
+        <li><strong>Quick pass on Gemini Nano.</strong> It writes the alt text and classifies the image (photo, chart, screenshot…) with a confidence score.</li>
+        <li><strong>Escalate only when it's worth it.</strong> Charts, screenshots and images with text on public pages get a detailed read from cloud Gemini (<em>ONLY_IN_CLOUD</em>).</li>
+        <li><strong>Shared cache.</strong> Descriptions of public images are stored in Firestore, so the next person gets them instantly at zero cost. Private images are never stored.</li>
+        <li><strong>Tuned live.</strong> Sensitive-site rules, escalation thresholds and models come from Firebase Remote Config. Requests are protected by App Check.</li>
+      </ol>
+    </section>
+  </main>
+  <footer class="wrap foot"><p>Built for #BuildHybridAI 2026 with Firebase AI Logic hybrid inference. Open source under Apache 2.0.</p></footer>
+  <script type="module" src="app.js"></script>
+</body>
+</html>
